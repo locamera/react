@@ -1,0 +1,33 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+services:
+  - docker:dind
+
+build:
+  stage: build
+  image: docker:latest
+  script:
+    - docker build -t locamera-frontend .
+    - docker build -t locamera-api ./api
+
+test:
+  stage: test
+  image: node:16
+  script:
+    - npm install
+    - npm test
+
+deploy:
+  stage: deploy
+  image: docker:latest
+  script:
+    - docker-compose up -d
+  only:
+    - main
