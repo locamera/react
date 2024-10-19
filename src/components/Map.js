@@ -1,6 +1,16 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import L from 'leaflet';
 
+// Create custom icon
+const cameraIcon = function(L,preview) {
+    return L.icon({
+        iconUrl: preview,
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+    });
+};
+
 const Map = ({ cameras }) => {
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
@@ -31,11 +41,11 @@ const Map = ({ cameras }) => {
             const popupContent = `
                 <b>${camera.protocol}</b><br>
                 <img src="${camera.preview}" alt="Preview" 
-                     onerror="this.onerror=null;this.src='/camera-icon.svg';" 
+                     onerror="this.onerror=null;this.src='camera-icon.svg';" 
                      width="100" height="100"/>
             `;
-            
-            L.marker([camera.lat, camera.lng])
+
+            L.marker([camera.lat, camera.lng], { icon: cameraIcon(L, camera.preview) })
                 .addTo(mapInstanceRef.current)
                 .bindPopup(popupContent);
         });
