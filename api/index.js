@@ -1,10 +1,15 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { body, validationResult } = require('express-validator');
 const app = express();
 const port = process.env.API_PORT || 3002;
+const axios = require('axios');
 
 app.use(cors());
+app.use(express.json());
 
 // Example data with more diverse preview types and location information
 const cameras = [
@@ -29,6 +34,84 @@ const incidents = [
     { id: 7, cameraId: 5, type: 'Vehicle Detected', timestamp: '2023-10-13T16:20:00Z', description: 'Speeding vehicle on main road', status: 'Reported' },
     { id: 8, cameraId: 6, type: 'Sound Detected', timestamp: '2023-10-12T17:10:00Z', description: 'Glass breaking sound detected', status: 'Investigating' },
 ];
+
+// Mock user database (replace with a real database in production)
+let users = [];
+
+// Registration endpoint
+app.post('/api/register', [
+  body('email').isEmail(),
+  body('password').isLength({ min: 6 }),
+  body('captcha').notEmpty(),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { email, password, captcha } = req.body;
+
+  // Verify CAPTCHA
+  try {
+    const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captcha}`;
+    const captchaRes = await axios.post(verifyURL);
+    if (!captchaRes.data.success) {
+      return res.status(400).json({ error: 'Invalid CAPTCHA' });
+    }
+  } catch (err) {
+    return res.status(500).json({ error: 'Error verifying CAPTCHA' });
+  }
+
+  // Check if user already exists
+  if (users.find(user => user.email === email)) {
+    return res.status(400).json({ error: 'User already exists' });
+  }
+
+  // Hash password
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Create new user
+  const newUser = { id: users.length + 1, email, password: hashedPassword, role: 'user' };
+  users.push(newUser);
+
+  res.status(201).json({ message: 'User registered successfully' });
+});
+
+// Login endpoint
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = users.find(user => user.email === email);
+  if (!user) {
+    return res.status(400).json({ error: 'Invalid credentials' });
+  }
+
+  const validPassword = await bcrypt.compare(password, user.password);
+  if (!validPassword) {
+    return res.status(400).json({ error: 'Invalid credentials' });
+  }
+
+  const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  res.json({ token });
+});
+
+// Protected route example
+app.get('/api/user', authenticateToken, (req, res) => {
+  res.json(req.user);
+});
+
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+}
 
 app.get('/api/cameras', (req, res) => {
     res.json(cameras);

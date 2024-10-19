@@ -11,6 +11,7 @@ services:
       - api
     environment:
       - REACT_APP_API_URL=${API_URL}
+      - REACT_APP_RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY}
 
   api:
     build:

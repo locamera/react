@@ -6,6 +6,8 @@ import IncidentsTable from './components/IncidentsTable';
 import Account from './components/Account';
 import CameraManagement from './components/CameraManagement';
 import IncidentsManagement from './components/IncidentsManagement';
+import Login from './components/Login';
+import Register from './components/Register';
 import './styles/App.css';
 
 function App() {
@@ -14,6 +16,7 @@ function App() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        // Fetch cameras
         fetch(`${process.env.REACT_APP_API_URL}/api/cameras`)
             .then(response => {
                 if (!response.ok) {
@@ -27,6 +30,7 @@ function App() {
                 setError('Failed to fetch camera data');
             });
 
+        // Fetch incidents
         fetch(`${process.env.REACT_APP_API_URL}/api/incidents`)
             .then(response => {
                 if (!response.ok) {
@@ -60,6 +64,8 @@ function App() {
                         <Route path="/incidents" element={<IncidentsManagement incidents={incidents} />} />
                         <Route path="/account" element={<Account />} />
                         <Route path="/camera-management" element={<CameraManagement cameras={cameras} setCameras={setCameras} />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
                     </Routes>
                 </main>
             </div>
