@@ -7,7 +7,8 @@ const createCameraIcon = (L, preview) => {
         iconUrl: preview || '/camera-icon.svg',
         iconSize: [32, 32],
         iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
+        popupAnchor: [0, -32],
+        tooltipAnchor: [16, -16]
     });
 };
 
@@ -53,9 +54,24 @@ const Map = ({ cameras }) => {
                      data-camera-id="${id}"/>
             `;
 
+            const tooltipContent = `
+                <b>${protocol}</b><br>
+                IP: ${camera.ip || 'Unknown'}<br>
+                <img src="${preview}" 
+                     alt="Preview" 
+                     width="100" height="100"
+                     data-camera-id="${id}"/>
+            `;
+
             const marker = L.marker([lat, lng], { icon: createCameraIcon(L, preview) })
                 .addTo(mapInstanceRef.current)
-                .bindPopup(popupContent);
+                .bindPopup(popupContent)
+                .bindTooltip(tooltipContent, {
+                    direction: 'top',
+                    offset: L.point(0, -20),
+                    permanent: false,
+                    opacity: 0.9
+                });
 
             markersRef.current[id] = marker;
         });
