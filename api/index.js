@@ -8,7 +8,7 @@ app.use(cors());
 // Example data
 const cameras = [
     { id: 1, ip: '192.168.1.1', protocol: 'RTSP', preview: 'image1.gif', lat: 51.505, lng: -0.09 },
-    { id: 2, ip: '192.168.1.2', protocol: 'RTSP', preview: 'image2.gif', lat: 51.51, lng: -0.1 },
+    { id: 2, ip: '192.168.1.2', protocol: 'RTSP', preview: 'camera-icon.svg', lat: 51.51, lng: -0.1 },
     // ... more cameras
 ];
 

@@ -14,7 +14,7 @@
     "react-leaflet": "^4.2.1",
     "react-scripts": "^5.0.1"
   },
-  "description": "react.locamera.com",
+  "description": "LoCamera - Local Map Cameras - react.locamera.com",
   "main": "index.js",
   "keywords": [],
   "author": "",
