@@ -17,6 +17,7 @@ const Map = ({ cameras }) => {
     const mapInstanceRef = useRef(null);
     const markersRef = useRef({});
     const [fallbackImages, setFallbackImages] = useState({});
+    const [incidents, setIncidents] = useState([]);
 
     const initializeMap = useCallback(() => {
         if (mapInstanceRef.current) return;
@@ -28,6 +29,26 @@ const Map = ({ cameras }) => {
 
         mapInstanceRef.current = map;
     }, []);
+
+    const fetchIncidents = useCallback(async () => {
+        try {
+            const response = await fetch('http://localhost:3002/api/incidents');
+            if (!response.ok) {
+                throw new Error('Failed to fetch incidents');
+            }
+            const data = await response.json();
+            setIncidents(data);
+        } catch (error) {
+            console.error('Error fetching incidents:', error);
+        }
+    }, []);
+
+    const getLastThreeIncidents = useCallback((cameraId) => {
+        return incidents
+            .filter(incident => incident.cameraId === cameraId)
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+            .slice(0, 3);
+    }, [incidents]);
 
     const updateMarkers = useCallback(() => {
         if (!mapInstanceRef.current) return;
@@ -46,12 +67,24 @@ const Map = ({ cameras }) => {
             const protocol = camera.protocol || 'Unknown';
             const preview = fallbackImages[id] || camera.preview || '/camera-icon.svg';
 
+            const lastThreeIncidents = getLastThreeIncidents(camera.id);
+            const incidentsHtml = lastThreeIncidents.map(incident => 
+                `<li>${incident.type} - ${new Date(incident.timestamp).toLocaleString()}</li>`
+            ).join('');
+
             const popupContent = `
                 <b>${protocol}</b><br>
                 <img src="${preview}" 
                      alt="Preview" 
                      width="100" height="100"
                      data-camera-id="${id}"/>
+                <div>
+                    <button onclick="window.playStream(${id})">Play</button>
+                    <button onclick="window.pauseStream(${id})">Pause</button>
+                    <button onclick="window.stopStream(${id})">Stop</button>
+                </div>
+                <h3>Last 3 Incidents:</h3>
+                <ul>${incidentsHtml}</ul>
             `;
 
             const tooltipContent = `
@@ -75,7 +108,7 @@ const Map = ({ cameras }) => {
 
             markersRef.current[id] = marker;
         });
-    }, [cameras, fallbackImages]);
+    }, [cameras, fallbackImages, getLastThreeIncidents]);
 
     const handleImageError = useCallback((cameraId) => {
         setFallbackImages(prev => ({
@@ -86,13 +119,14 @@ const Map = ({ cameras }) => {
 
     useEffect(() => {
         initializeMap();
+        fetchIncidents();
         return () => {
             if (mapInstanceRef.current) {
                 mapInstanceRef.current.remove();
                 mapInstanceRef.current = null;
             }
         };
-    }, [initializeMap]);
+    }, [initializeMap, fetchIncidents]);
 
     useEffect(() => {
         updateMarkers();
@@ -126,6 +160,22 @@ const Map = ({ cameras }) => {
             }
         });
     }, [fallbackImages]);
+
+    // Add these functions to the window object to make them accessible from the popup
+    useEffect(() => {
+        window.playStream = (cameraId) => {
+            console.log(`Playing stream for camera ${cameraId}`);
+            // Implement play logic here
+        };
+        window.pauseStream = (cameraId) => {
+            console.log(`Pausing stream for camera ${cameraId}`);
+            // Implement pause logic here
+        };
+        window.stopStream = (cameraId) => {
+            console.log(`Stopping stream for camera ${cameraId}`);
+            // Implement stop logic here
+        };
+    }, []);
 
     return <div ref={mapRef} style={{ height: '500px', width: '100%' }}></div>;
 };

@@ -17,8 +17,21 @@ const cameras = [
     { id: 8, ip: '192.168.1.8', protocol: 'HTTP', preview: 'cam7.gif', lat: 51.51, lng: -0.085 },
 ];
 
+// Example incident data
+const incidents = [
+    { id: 1, cameraId: 1, type: 'Motion Detected', timestamp: '2023-10-19T10:30:00Z' },
+    { id: 2, cameraId: 1, type: 'Person Detected', timestamp: '2023-10-19T11:15:00Z' },
+    { id: 3, cameraId: 2, type: 'Vehicle Detected', timestamp: '2023-10-19T12:00:00Z' },
+    { id: 4, cameraId: 1, type: 'Sound Detected', timestamp: '2023-10-19T13:45:00Z' },
+    // Add more incidents as needed
+];
+
 app.get('/api/cameras', (req, res) => {
     res.json(cameras);
+});
+
+app.get('/api/incidents', (req, res) => {
+    res.json(incidents);
 });
 
 // Add more endpoints as needed for user authentication and incidents
