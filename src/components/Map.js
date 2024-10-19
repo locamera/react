@@ -44,10 +44,12 @@ const Map = ({ cameras }) => {
     }, []);
 
     const getLastThreeIncidents = useCallback((cameraId) => {
-        return incidents
+        const cameraIncidents = incidents
             .filter(incident => incident.cameraId === cameraId)
             .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
             .slice(0, 3);
+        
+        return cameraIncidents.length > 0 ? cameraIncidents : null;
     }, [incidents]);
 
     const updateMarkers = useCallback(() => {
@@ -68,9 +70,14 @@ const Map = ({ cameras }) => {
             const preview = fallbackImages[id] || camera.preview || '/camera-icon.svg';
 
             const lastThreeIncidents = getLastThreeIncidents(camera.id);
-            const incidentsHtml = lastThreeIncidents.map(incident => 
-                `<li>${incident.type} - ${new Date(incident.timestamp).toLocaleString()}</li>`
-            ).join('');
+            let incidentsHtml;
+            if (lastThreeIncidents) {
+                incidentsHtml = lastThreeIncidents.map(incident => 
+                    `<li>${incident.type} - ${new Date(incident.timestamp).toLocaleString()}</li>`
+                ).join('');
+            } else {
+                incidentsHtml = '<li>There are no incidents yet.</li>';
+            }
 
             const popupContent = `
                 <b>${protocol}</b><br>

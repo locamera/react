@@ -1,7 +1,8 @@
-# react
-react.locamera.com
+# [react](http://react.locamera.com)
 
+![alt text](image.png)
 
+Files strucutre
 ```bash
 locamera/
 ├── api/
@@ -26,6 +27,8 @@ node index.js
 ```
 You should see the message: "API running at http://localhost:3000"
 
+For the frontend, we need to ensure all necessary dependencies are installed. In a new terminal window:
+
 ```bash
 cd src
 npm audit fix --force
@@ -38,9 +41,5 @@ Start
 npm start
 ```
 
-For the frontend, we need to ensure all necessary dependencies are installed. In a new terminal window:
-Now, let's start the React development server:
-```bash
-```
 
 This should open your default browser to http://localhost:3000 (or another port if 3000 is already in use).
