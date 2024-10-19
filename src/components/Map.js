@@ -4,7 +4,7 @@ import L from 'leaflet';
 // Create custom icon
 const createCameraIcon = (L, preview) => {
     return L.icon({
-        iconUrl: preview,
+        iconUrl: preview || '/camera-icon.svg',
         iconSize: [32, 32],
         iconAnchor: [16, 32],
         popupAnchor: [0, -32]
@@ -39,19 +39,25 @@ const Map = ({ cameras }) => {
 
         // Add new markers
         cameras.forEach(camera => {
+            const id = camera.id || Math.random().toString(36).substr(2, 9);
+            const lat = camera.lat || 0;
+            const lng = camera.lng || 0;
+            const protocol = camera.protocol || 'Unknown';
+            const preview = fallbackImages[id] || camera.preview || '/camera-icon.svg';
+
             const popupContent = `
-                <b>${camera.protocol}</b><br>
-                <img src="${fallbackImages[camera.id] || camera.preview}" 
+                <b>${protocol}</b><br>
+                <img src="${preview}" 
                      alt="Preview" 
                      width="100" height="100"
-                     data-camera-id="${camera.id}"/>
+                     data-camera-id="${id}"/>
             `;
 
-            const marker = L.marker([camera.lat, camera.lng], { icon: createCameraIcon(L, fallbackImages[camera.id] || camera.preview) })
+            const marker = L.marker([lat, lng], { icon: createCameraIcon(L, preview) })
                 .addTo(mapInstanceRef.current)
                 .bindPopup(popupContent);
 
-            markersRef.current[camera.id] = marker;
+            markersRef.current[id] = marker;
         });
     }, [cameras, fallbackImages]);
 
@@ -79,14 +85,19 @@ const Map = ({ cameras }) => {
     useEffect(() => {
         // Check all images after markers are added
         cameras.forEach(camera => {
-            const img = new Image();
-            img.src = camera.preview;
-            img.onload = () => {
-                // Image loaded successfully, no action needed
-            };
-            img.onerror = () => {
-                handleImageError(camera.id);
-            };
+            const id = camera.id || Math.random().toString(36).substr(2, 9);
+            if (camera.preview) {
+                const img = new Image();
+                img.src = camera.preview;
+                img.onload = () => {
+                    // Image loaded successfully, no action needed
+                };
+                img.onerror = () => {
+                    handleImageError(id);
+                };
+            } else {
+                handleImageError(id);
+            }
         });
     }, [cameras, handleImageError]);
 
