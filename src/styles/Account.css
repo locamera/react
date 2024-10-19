@@ -1,0 +1,42 @@
+.account-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.account-container h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+.account-container p {
+  margin: 10px 0;
+}
+
+.account-container ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.account-container li {
+  margin: 5px 0;
+}
+
+.edit-profile-btn, .change-password-btn {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.change-password-btn {
+  background-color: #008CBA;
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/Header.css';
 
 const Header = () => {
@@ -11,9 +12,10 @@ const Header = () => {
             <small>map of local cameras</small>
             <nav className="main-nav">
                 <ul>
-                    <li><a href="#incidents">Incidents</a></li>
-                    <li><a href="#user-config">User Config</a></li>
-                    <li><a href="#configuration">Configuration</a></li>
+                    <li><Link to="/">Home</Link></li>
+                    <li><Link to="/incidents">Incidents</Link></li>
+                    <li><Link to="/account">Account</Link></li>
+                    <li><Link to="/camera-management">Camera Management</Link></li>
                 </ul>
             </nav>
         </header>
