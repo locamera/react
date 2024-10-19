@@ -32,7 +32,7 @@ const Map = ({ cameras }) => {
 
     const fetchIncidents = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:3002/api/incidents');
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/incidents`);
             if (!response.ok) {
                 throw new Error('Failed to fetch incidents');
             }

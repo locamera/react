@@ -14,7 +14,7 @@ build:
   stage: build
   image: docker:latest
   script:
-    - docker build -t locamera-frontend .
+    - docker build --build-arg REACT_APP_API_URL=${API_URL} -t locamera-frontend .
     - docker build -t locamera-api ./api
 
 test:
@@ -28,6 +28,6 @@ deploy:
   stage: deploy
   image: docker:latest
   script:
-    - docker-compose up -d
+    - docker-compose --env-file .env up -d
   only:
     - main

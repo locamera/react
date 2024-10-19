@@ -9,13 +9,18 @@ services:
       - "80:80"
     depends_on:
       - api
+    environment:
+      - REACT_APP_API_URL=${API_URL}
 
   api:
     build:
       context: ./api
       dockerfile: Dockerfile
     ports:
-      - "3002:3002"
+      - "${API_PORT}:${API_PORT}"
     volumes:
       - ./api:/app
       - /app/node_modules
+    environment:
+      - API_PORT=${API_PORT}
+      - NODE_ENV=${NODE_ENV}
