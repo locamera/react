@@ -28,6 +28,6 @@ deploy:
   stage: deploy
   image: docker:latest
   script:
-    - docker-compose --env-file .env up -d
+    - docker compose --env-file .env up -d
   only:
     - main

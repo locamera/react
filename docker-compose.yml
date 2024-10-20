@@ -4,14 +4,11 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
+      dockerfile: certbot/Dockerfile
+    volumes:
+      - ./build:/usr/share/nginx/html
     depends_on:
       - api
-    environment:
-      - REACT_APP_API_URL=${API_URL}
-      - REACT_APP_RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY}
 
   api:
     build:
@@ -25,3 +22,32 @@ services:
     environment:
       - API_PORT=${API_PORT}
       - NODE_ENV=${NODE_ENV}
+      - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY}
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+    depends_on:
+      - frontend
+      - api
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email ${ADMIN_EMAIL} -d ${DOMAIN_NAME} -d www.${DOMAIN_NAME} --agree-tos
+
+volumes:
+  certbot_conf:
+  certbot_www:

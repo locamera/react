@@ -8,14 +8,21 @@ LoCamera is a web application that displays local cameras on an interactive map.
 - Camera information on hover
 - Live stream playback controls
 - Recent incidents display for each camera
+- User registration and login with ReCAPTCHA
+- Camera and incident management interfaces
 - Dockerized application for easy deployment
+- HTTPS support for secure connections
+- Responsive design for mobile and desktop
 
 ## Technologies Used
 
 - Frontend: React, Leaflet
 - Backend: Node.js, Express
+- Authentication: JWT, bcrypt
+- Database: (To be implemented)
 - Containerization: Docker, Docker Compose
 - CI/CD: GitLab CI
+- SSL: Let's Encrypt (Production), Self-signed (Development)
 
 ## Getting Started
 
@@ -27,53 +34,36 @@ LoCamera is a web application that displays local cameras on an interactive map.
 
 ### Installation
 
-Run the following commands:
-```bash
-cd api
-npm install express cors
-node index.js
-```
-You should see the message: "API running at http://localhost:3000"
-
-For the frontend, we need to ensure all necessary dependencies are installed. In a new terminal window:
-
-```bash
-cd src
-npm audit fix --force
-npm install react-leaflet leaflet
-npm audit fix --force
-```
-
 1. Clone the repository:
    ```
    git clone https://gitlab.com/your-username/locamera.git
    cd locamera
    ```
 
-2. Install dependencies:
-   ```
-   npm install
-   cd api && npm install && cd ..
-   ```
+2. Set up environment variables:
+   - Copy `.env.example` to `.env` and fill in the necessary values.
 
-3. Create a `.env` file in the root directory and add the necessary environment variables (see `.env.example`).
-
-4. Start the development servers:
+3. Use the management script to set up and run the application:
    ```
-   npm start
-   cd api && npm start
+   chmod +x manage-locamera.sh
+   ./manage-locamera.sh
    ```
 
-5. Open `http://localhost:3000` in your browser to view the application.
+4. Choose the appropriate option from the menu to start the application.
 
-### Running with Docker
+## Development
 
-1. Build and run the Docker containers:
-   ```
-   docker-compose up --build
-   ```
+- To start the development environment with HTTP:
+  ```
+  ./manage-locamera.sh
+  ```
+  Then select option 1 from the menu.
 
-2. Open `http://localhost:80` in your browser to view the application.
+- To start the development environment with HTTPS:
+  ```
+  ./manage-locamera.sh
+  ```
+  Then select option 2 from the menu.
 
 ## Deployment
 
@@ -81,6 +71,8 @@ The project includes a `.gitlab-ci.yml` file for GitLab CI/CD. To deploy:
 
 1. Push your changes to the GitLab repository.
 2. The pipeline will automatically build, test, and deploy the application.
+
+For manual deployment, use the management script and select the "Start production environment" option.
 
 ## Contributing
 
@@ -101,6 +93,8 @@ Files structure
 locamera/
 ├── api/
 │   └── index.js
+├── nginx/
+│   └── nginx.conf
 ├── public/
 │   └── index.html
 ├── src/
@@ -109,6 +103,9 @@ locamera/
 │   ├── App.js
 │   └── index.css
 │   └── index.js
+├── .env
+├── Dockerfile
+├── docker-compose.yml
 ├── package.json
 └── README.md
 ```

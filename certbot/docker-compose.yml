@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  nginx-certbot:
+    build:
+      context: ../nginx
+      dockerfile: ../nginx/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+    restart: unless-stopped
+
+volumes:
+  certbot_conf:
+  certbot_www:

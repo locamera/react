@@ -8,25 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Initial project setup
-- React frontend with Leaflet map integration
-- Node.js backend with Express
-- Docker and Docker Compose configuration
-- GitLab CI/CD pipeline
-- Camera markers on the map with custom icons
-- Popup and tooltip information for each camera
-- Recent incidents display for each camera
-- Live stream playback controls (placeholder functionality)
-- Environment variable configuration
-- Basic error handling and fallback images
+- Management script (`manage-locamera.sh`) for easier project management
+- Local HTTPS support for development environment
+- SSL certificate generation and renewal scripts
+- Docker Compose configurations for both development and production environments
+- Nginx configuration for serving the application and handling SSL
+- User registration and login functionality with JWT authentication
+- ReCAPTCHA integration for user registration
+- Incidents management with weekly incident count
+- Camera management interface
+- Leaflet map integration for displaying camera locations
+- Popup and tooltip information for each camera on the map
+- Responsive design for better mobile experience
 
 ### Changed
-- Updated README with project information and setup instructions
-- Improved map interaction with hover effects
+- Updated Docker configurations to use environment variables
+- Improved error handling and fallback for image loading
+- Enhanced security with HTTPS and proper authentication flow
 
 ### Fixed
-- Handling of missing camera data fields
-- Image loading errors with fallback to default icon
+- Image loading issues with fallback to default icon
+- CORS issues in API
+- Various bug fixes and performance improvements
 
 ## [0.1.0] - 2023-10-19
 - Initial release
